@@ -10,6 +10,7 @@ import Workspace from '../pages/WorkspaceBoard';
 import { UserDBProvider } from '../contexts/userDBContext';
 import { Amplify } from 'aws-amplify';
 import awsExports from '../aws-exports';
+import Landing from '../pages/Landing';
 
 Amplify.configure(awsExports);
 
@@ -19,7 +20,7 @@ function App() {
     [
       {
         path: CONST_PATH.landing,   // '/'
-        element: <LogInSignUp />
+        element: <Landing />
       },
       {
         path: CONST_PATH.signInUp,   // '/signup-login'
