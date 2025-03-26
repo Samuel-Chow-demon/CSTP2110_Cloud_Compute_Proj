@@ -44,7 +44,8 @@ function Sidebar({signOutHandle}) {
       {
           await signOutHandle()
 
-          navigate(CONST_PATH.landing)
+          //navigate(CONST_PATH.landing)
+          window.location.href = '/';
       }
       catch(error)
       {
