@@ -17,8 +17,9 @@ import Paper from '@mui/material/Paper';
 const DisplayStream = ({ accID, streamResID, expTime }) => {
 	
 	// stored in key file
-	const BACK_END_IP = import.meta.env.BACK_END_PRIVATE_IP ;
-	const BACK_END_PORT = import.meta.env.BACK_END_PORT;
+	const BACK_END_IP = import.meta.env.VITE_BACK_END_PRIVATE_IP ;
+	const BACK_END_PORT = import.meta.env.VITE_BACK_END_PORT;
+    const LOAD_BALANCER_API = import.meta.env.VITE_LOAD_BALANCER_DNS_API
 	
     const [token, setToken] = useState(null);
 
@@ -129,7 +130,16 @@ const DisplayStream = ({ accID, streamResID, expTime }) => {
             SetIsStopped(false)
 
             // Step 1: Request Token by accID
-            const response = await axios.post(`http://${BACK_END_IP}:${BACK_END_PORT}/request-token`, requestInfo);
+            const response = await axios.post(`http://${BACK_END_IP}:${BACK_END_PORT}/request-token`, requestInfo,
+                {
+                    headers: { "Content-Type": "application/json" }
+                })
+
+            // const response = await axios.post(`http://${LOAD_BALANCER_API}/request-token`, requestInfo,
+            //     {
+            //         headers: { "Content-Type": "application/json" }
+            //     })
+
             const {token} = response.data;
             
             setToken(token);
@@ -141,6 +151,7 @@ const DisplayStream = ({ accID, streamResID, expTime }) => {
             // Step 3: Connect WebSocket
             //const websocket = new WebSocket(`ws://${BACK_END_IP}:${BACK_END_PORT}/ws/${accID}/?token=${encodeURIComponent(token)}`);
             const websocket = new WebSocket(`ws://${BACK_END_IP}:${BACK_END_PORT}/ws/${accID}/${streamResID}/?token=${token}`);
+            //const websocket = new WebSocket(`ws://${LOAD_BALANCER_API}/ws/${accID}/${streamResID}/?token=${token}`);
             
             wsRef.current = websocket;
 
