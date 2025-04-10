@@ -17,7 +17,7 @@
 | Date | Comment | Author|
 |------|---------|-------|
 |23 Mar 2025| 1st Revision <br>(Frontend with signup, login, email confirmation, deploy at AWS EC2, user data stored in AWS DynamoDB)| Chow, Tsz Chun Samuel|
-|| | |
+|10 Apr 2025| 2nd Revision <br>(Frontend proxy server, NFS Server, backend class diagram, streaming and object detection result) | Chow, Tsz Chun Samuel|
 
 <br>
 
@@ -94,7 +94,7 @@
 
 ||Descrptions|
 |---|---|
-|Hardware|**Frontend (Web Application and networking loads)**<br>&bull; AWS Instance: t3.medium<br>&bull; vCPUs: 2<br>&bull; Memory: 4Gb<br>&bull; Network performance: Up to 5 Gps<br><br>**Backend (Binary socket streaming, Object Detection loads)**<br>&bull; AWS Instance: g4dn.xlarge<br>&bull; GPU: 1 x NVIDIA T4 Tensor Core GPU<br>&bull; vCPUs: 4<br>&bull; Memory: 16 Gb |
+|Hardware|**Frontend (Web Application and networking loads)**<br>&bull; AWS Instance: t3.medium<br>&bull; vCPUs: 2<br>&bull; Memory: 4Gb<br>&bull; Network performance: Up to 5 Gps<br><br>**Frontend (NAT Gateway)**<br>&bull; AWS Instance: t2.micro<br>&bull; vCPU: 1<br>&bull; Memory: 1Gb<br>&bull; Network performance: low to moderate<br><br>**Frontend (File Storage Gateway)**<br>&bull; AWS Instance: m5.xlarge<br>&bull; vCPU: 4<br>&bull; Memory: 16Gb<br>&bull; Network performance: Up to 10 Gbps<br><br>**Backend (Binary socket streaming, Object Detection loads)**<br>&bull; AWS Instance: g4dn.xlarge<br>&bull; GPU: 1 x NVIDIA T4 Tensor Core GPU<br>&bull; vCPUs: 4<br>&bull; Memory: 16 Gb |
 |Software|**Frontend**<br>&bull; Node.js, React-vite in Window Environment<br><br>**Backend**<br>&bull; Python, YOLOv11, tailor trained object detection model|
 
 #### 2.3.4 Estimates
@@ -114,11 +114,12 @@
 |11|Backend server and object detection object development|4 hrs|
 |12|Object Detection YOLO model training with dataset annotation|4 hrs|
 |13|Backend object detection model implementation to video test|4 hrs|
-|14|Backend use S3 Library for retrieving model data and video source|4 hrs|
+|14|Backend link to S3 bucket through NFS Server and gateway under a network drive mapping for retrieving model data and video source|6 hrs|
 |15|Backend to Frontend binary WebSocket development and test |4 hrs|
 |16|Frontend application to EC2 deployment|2 hrs|
 |17|Backend application to EC2 deployment|3 hrs|
-||TOTAL:|49.5 hrs|
+|18|Frontend proxy server to redirect request from public IP hosted web application to private backend|2 hrs|
+||TOTAL:|53.5 hrs|
 
 
 <br>
@@ -127,7 +128,7 @@
 
 ### 3.1 Overview
 
-![System Architecture](./pic/SystemArchitecture.png)
+![System Architecture](./pic/SystemArchitecture_v3.png)
 
 <p style="text-align:justify">
     The system introduces communication between a frontend web application and a backend server application which are deployed in a AWS EC2 instance under a private virtual cloud. Frontend is configured in a public subnet while the backend is in a private one. The public subnet routes to the internet gateway (IGW) for internet access. On the other hand, the private subnet routes to a NAT gateway for redirection to the internet.
@@ -138,7 +139,11 @@
 </p>
 
 <p style="text-align:justify">
-    At the same moment, backend runs a python server for video streaming object detection. The pretend streaming resources video files and trained AI model are stored inside the AWS S3, both would be access by the backend for object detection processing and then turn into binary data transfer to the frontend under WebSocket connection.
+    At the same moment, backend runs a python server for video streaming object detection. The pretend streaming resources video files and trained AI model are stored inside the AWS S3. To let the backend server able to access the S3 bucket resources, a NFS Server is used and run under a EC2 instance under the public subnet. The NFS Server would do registration and retrieve authenication from AWS Storage Gateway Service such that mapping the target S3 bucket to the destination backend EC2 instance as a network volume.
+</p>
+
+<p style="text-align:justify">
+    Under this setup, the backend server can access the S3 bucket stored resources such as the AI model for detection and the video resources, and then turn into binary data to transfer to the frontend under WebSocket connection.
 </p>
 
 <br>
@@ -152,11 +157,15 @@
 
 <h4>a1) Frontend</h4>
 
-![FrontendClassDiagrame](./pic/CloudProj_frontend.png)
+![FrontendClassDiagram](./pic/CloudProj_frontend.png)
+
+<h4>a2) Frontend (proxy server)</h4>
+
+It just has a Express application with a created ProxyMiddleware and ProxyServer to redirect the request and websocket data to backend
 
 <h4>a2) Backend</h4>
 
-In progress . . .
+![BackendClassDiagram](./pic/backend_classDiagram.png)
 
 <br>
 
@@ -196,6 +205,8 @@ In progress . . .
 > | VITE_LAMBDA_EXE_ARN                     | Lambda function to access and handle DynamoDB ARN | String |
 > | VITE_BACK_END_PRIVATE_IP                | Backend Private IP | String |
 > | VITE_BACK_END_PORT                      | Backend Server Running Port | String |
+> | VITE_FRONT_END_PUBLIC_IP                | Frontend Public IP | String |
+> | VITE_FRONT_END_PROXY_SERVER_PORT        | Frontend Proxy Server Port | String |
 
 <h4><u>SignUp Page</u></h4>
 
@@ -262,7 +273,7 @@ Main Dashboard
 
 Streaming Board
 
-- In Progress. . .
+![Streaming](./pic/Streaming.png)
 
 
 ### 5.3 Use Cases / User Function Description
@@ -284,7 +295,7 @@ Email Confirmation Code Entry
 
 Streaming Detection On / OFF and Metrics
 
-- In Progress . . .
+![ObjectDetectAndCount](./pic/ObjectDetectAndCount.png)
 
 
 <br>
