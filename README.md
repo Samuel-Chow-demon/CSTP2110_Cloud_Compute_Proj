@@ -102,7 +102,7 @@
 ||Descrptions|
 |---|---|
 |Hardware|**Frontend (Web Application and networking loads)**<br>&bull; AWS Instance: t3.medium<br>&bull; vCPUs: 2<br>&bull; Memory: 4Gb<br>&bull; Network performance: Up to 5 Gps<br><br>**Frontend (NAT Gateway)**<br>&bull; AWS Instance: t2.micro<br>&bull; vCPU: 1<br>&bull; Memory: 1Gb<br>&bull; Network performance: low to moderate<br><br>**Frontend (File Storage Gateway)**<br>&bull; AWS Instance: m5.xlarge<br>&bull; vCPU: 4<br>&bull; Memory: 16Gb<br>&bull; Network performance: Up to 10 Gbps<br><br>**Backend (Binary socket streaming, Object Detection loads)**<br>&bull; AWS Instance: g4dn.xlarge<br>&bull; GPU: 1 x NVIDIA T4 Tensor Core GPU<br>&bull; vCPUs: 4<br>&bull; Memory: 16 Gb |
-|Software|**Frontend**<br>&bull; Node.js, React-vite in Window Environment<br><br>**Backend**<br>&bull; Python, YOLOv11, tailor trained object detection model|
+|Software|**Frontend**<br>&bull; Node.js, React-vite in Window Environment<br><br>**Backend**<br>&bull; Python, YOLOv12, tailor trained object detection model|
 
 #### 2.4.4 Estimates
 
