@@ -4,12 +4,12 @@
 
 ### 1.1 Project
 
-<p style="font-size:18px; font-weight:bold">ESeePark Parking Management App</p>
+<p style="font-size:18px; font-weight:bold">ESeePark - A Parking Management Application with AWS Infrastructure</p>
 
 ### 1.2 Description
 
 <p style="text-align:justify">
-    The project is a real-time streaming parking lot management application. It includes frontend and backend services which would be deployed through AWS EC2 Window instances under a AWS VPC network system. Frontend provides user signup, login and signup confirmation flows which making use AWS Amplify to setup AWS Cognito for registration, authentication and confirmation. The user registration would invoke the AWS Lambda for passing the input user account data to the AWS DynamoDB for storage. On the other hand, Backend runs a server on listening to the Frontend request. It provides the real-time streaming data (project uses static video to pretend a live camera setup at the parking site) which retrieved from the AWS S3 bucket and performing object detection (tailor trained YOLOv11 model) on parking lot occupied and empty classification. Processed result would be destructed into a binary stream together with the data back to Frontend for display.
+    The project is a real-time streaming parking lot management application. It includes frontend and backend services which would be deployed through AWS EC2 Window instances under a AWS VPC network system. Frontend provides user signup, login and signup confirmation flows which making use AWS Amplify to setup AWS Cognito for registration, authentication and confirmation. The user registration would invoke the AWS Lambda for passing the input user account data to the AWS DynamoDB for storage. On the other hand, Backend runs a server on listening to the Frontend request. It provides the real-time streaming data (project uses static video to pretend a live camera setup at the parking site) which retrieved from the AWS S3 bucket and performing object detection (tailor trained YOLOv12 model) on parking lot occupied and empty classification. Processed result would be destructed into a binary stream together with the data back to Frontend for display.
 </p>
 
 ### 1.3 Revision History
@@ -29,7 +29,14 @@
     The project focuses on utilizing AWS services includes Cognito Authentication, Amplify frontend management, EC2 instance, VPC networking, Lambda serverless function, DynamoDB database storage, S3 data bucket usage on a Frontend to Backend application.
 </p>
 
-### 2.2 Scope
+### 2.2 AWS Infrastructure Summary
+||AWS Services|
+|-|-|
+|Network|VPC, Subnet, IGW, NAT, CloudWatch|
+|Frontend| • Amplify : Cognito configuration setup<br> • Congito : Authentication system<br> • Lambda + DynamoDB : User account information storage<br> • Web application hosting|
+|Backend| • EC2 : Server hosting, NFS Server (S3 File Gateway)<br> • Endpoint : VPC to S3, VPC to AWS storage gateway service<br> • S3 : Bucket storing detection model and video resources|
+
+### 2.3 Scope
 
 <h4><u>
     Authentication
@@ -63,9 +70,9 @@
     Two object classes occupied and empty (parking slot) are going to be detected and identified. Counting for these two classes are provided to display at the same time.
 </p>
 
-### 2.3 Requirements
+### 2.4 Requirements
 
-#### 2.3.1 Functional Requirements
+#### 2.4.1 Functional Requirements
 
 |  | Requirement(s) |
 |------|------|
@@ -74,7 +81,7 @@
 |R3| **Real-Time Parking Status**<br>&bull; Application should be able to display parking site live streaming<br>&bull; The parking spot with “Occupied” or “Empty” status should be able to be identified together with corresponding counter<br>&bull; User able to ON / OFF the detection|
 
 
-#### 2.3.2 Non-Functional Requirements
+#### 2.4.2 Non-Functional Requirements
 
 <h4><u>Performance</u></h4>
 
@@ -89,7 +96,7 @@
     The system should support easy updates and bug fixes with git repository
 </p>
 
-#### 2.3.3 Technical Requirements
+#### 2.4.3 Technical Requirements
 
 
 ||Descrptions|
@@ -97,7 +104,7 @@
 |Hardware|**Frontend (Web Application and networking loads)**<br>&bull; AWS Instance: t3.medium<br>&bull; vCPUs: 2<br>&bull; Memory: 4Gb<br>&bull; Network performance: Up to 5 Gps<br><br>**Frontend (NAT Gateway)**<br>&bull; AWS Instance: t2.micro<br>&bull; vCPU: 1<br>&bull; Memory: 1Gb<br>&bull; Network performance: low to moderate<br><br>**Frontend (File Storage Gateway)**<br>&bull; AWS Instance: m5.xlarge<br>&bull; vCPU: 4<br>&bull; Memory: 16Gb<br>&bull; Network performance: Up to 10 Gbps<br><br>**Backend (Binary socket streaming, Object Detection loads)**<br>&bull; AWS Instance: g4dn.xlarge<br>&bull; GPU: 1 x NVIDIA T4 Tensor Core GPU<br>&bull; vCPUs: 4<br>&bull; Memory: 16 Gb |
 |Software|**Frontend**<br>&bull; Node.js, React-vite in Window Environment<br><br>**Backend**<br>&bull; Python, YOLOv11, tailor trained object detection model|
 
-#### 2.3.4 Estimates
+#### 2.4.4 Estimates
 
 |#|Descriptions|Hrs. Est.|
 |-|-|-|
@@ -128,7 +135,7 @@
 
 ### 3.1 Overview
 
-![System Architecture](./pic/SystemArchitecture_v3.png)
+![System Architecture](./images/SystemArchitecture_v3.webp)
 
 <p style="text-align:justify">
     The system introduces communication between a frontend web application and a backend server application which are deployed in a AWS EC2 instance under a private virtual cloud. Frontend is configured in a public subnet while the backend is in a private one. The public subnet routes to the internet gateway (IGW) for internet access. On the other hand, the private subnet routes to a NAT gateway for redirection to the internet.
@@ -157,7 +164,7 @@
 
 <h4>a1) Frontend</h4>
 
-![FrontendClassDiagram](./pic/CloudProj_frontend.png)
+![FrontendClassDiagram](./images/CloudProj_frontend.webp)
 
 <h4>a2) Frontend (proxy server)</h4>
 
@@ -165,7 +172,7 @@ It just has a Express application with a created ProxyMiddleware and ProxyServer
 
 <h4>a2) Backend</h4>
 
-![BackendClassDiagram](./pic/backend_classDiagram.png)
+![BackendClassDiagram](./images/backend_classDiagram.webp)
 
 <br>
 
@@ -258,44 +265,44 @@ It just has a Express application with a created ProxyMiddleware and ProxyServer
 
 Landing Page / LogIn
 
-![landing](./pic/landing.png)
+![landing](./images/landing.webp)
 
 
 ### 5.2 User Interface Navigation Flow
 
 SignUp Page
 
-![SignUp](./pic/SignUp.png)
+![SignUp](./images/SignUp.webp)
 
 Main Dashboard
 
-![Dashboard](./pic/Dashboard.png)
+![Dashboard](./images/Dashboard.webp)
 
 Streaming Board
 
-![Streaming](./pic/Streaming.png)
+![Streaming](./images/Streaming.webp)
 
 
 ### 5.3 Use Cases / User Function Description
  
 Password Confirm Check - NG
 
-![psConfirmCheck](./pic/PasswordConfirmCompare.png)
+![psConfirmCheck](./images/PasswordConfirmCompare.webp)
 
-<img src="./pic/PasswordConfirmCheck.png" width="400" height="600">
+<img src="./images/PasswordConfirmCheck.webp" width="400" height="600">
 
 Password Confirm Check - OK
 
-![psConfirmCheck](./pic/PasswordConfirmCompare-OK.png)
+![psConfirmCheck](./images/PasswordConfirmCompare-OK.webp)
 
 Email Confirmation Code Entry
 
-![emailConfirmCodeEntry](./pic/SendConfirmCodeAndWaitEntry.png)
+![emailConfirmCodeEntry](./images/SendConfirmCodeAndWaitEntry.webp)
 
 
 Streaming Detection On / OFF and Metrics
 
-![ObjectDetectAndCount](./pic/ObjectDetectAndCount.png)
+![ObjectDetectAndCount](./images/ObjectDetectAndCount.webp)
 
 
 <br>
